@@ -135,7 +135,7 @@ async function workOnData(_data) {
       .fadeIn(1000)
       .end()
       .appendTo('#slideshow');
-  },  50000);
+  },  5000);
   
   //animateButtons(true);
   // await delay(2000);
