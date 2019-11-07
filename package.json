@@ -1,0 +1,21 @@
+{
+  "name": "data-visualized",
+  "version": "0.0.1",
+  "description": "Visualize the user reviews data that were previously scraped.",
+  "main": "server.js",
+  "dependencies": {
+    "animate.css": "^3.7.2",
+    "body-parser": "^1.19.0",
+    "ejs": "^2.7.1",
+    "express": "^4.17.1",
+    "jquery": "^3.4.1",
+    "lodash": "^4.17.15"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "Mario M",
+  "license": "ISC"
+}
