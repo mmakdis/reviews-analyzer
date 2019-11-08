@@ -81,7 +81,7 @@ async function addContainers(contentIndex) {
           data[dataKeys[i]]["source"] === "Google Play" ? "Android" : ""; 
     element.innerHTML = `
     <div class="stars-outer">
-      <div class="${data[dataKeys[i]]["app"].replace(/\s+/g, '-')}-star stars-inner"></div>
+      <div class="${data[dataKeys[i]]["app"].replace(/\s+/g, '-')}-${dataKeys[i]} stars-inner"></div>
     </div>
     <span style="display:inline-block; width: 1.8rem;"></span>
     <img class="logo" src="../images/${logo}.svg">
@@ -152,7 +152,7 @@ function fillStars() {
   for(var i=0; i<3; i++) {
     const starPercentage = (avgRatings[avgKeys[i]] / starTotal) * 100;
     const starPercentageRounded = `${(Math.round(starPercentage / 10) * 10)}%`;
-    var items = document.getElementsByClassName(`${data[avgKeys[i]]["app"].replace(/\s+/g, '-')}-star stars-inner`);
+    var items = document.getElementsByClassName(`${data[avgKeys[i]]["app"].replace(/\s+/g, '-')}-${dataKeys[i]} stars-inner`);
     items.item(0).style.width = starPercentageRounded;
   }
   avgKeys.splice(0, 3);
