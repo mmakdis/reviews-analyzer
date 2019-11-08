@@ -210,3 +210,9 @@ content: "\f006 \f006 \f006 \f006 \f006";
 #slideshow > div {
 	position: fixed;
 }
+
+.logo {
+	display: flex;
+	flex-wrap: wrap;
+	position: relative;
+}

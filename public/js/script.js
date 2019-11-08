@@ -77,10 +77,15 @@ async function addContainers(contentIndex) {
     var element = document.createElement("div");
     element.setAttribute("id", `${dataKeys[i]}`);
     element.setAttribute("class", `container animated zoomIn ${alignHoriz[i]}`);
+    var logo = data[dataKeys[i]]["source"] === "Apple Store" ? "iOS" :
+          data[dataKeys[i]]["source"] === "Google Play" ? "Android" : ""; 
     element.innerHTML = `
     <div class="stars-outer">
-        <div class="${data[dataKeys[i]]["app"]}-star stars-inner"></div>
-    </div>`;
+      <div class="${data[dataKeys[i]]["app"].replace(/\s+/g, '-')}-star stars-inner"></div>
+    </div>
+    <span style="display:inline-block; width: 1.8rem;"></span>
+    <img class="logo" src="../images/${logo}.svg">
+    `;
     document.getElementsByClassName('content')[contentIndex].appendChild(element);
     // contentIndex.appendChild(element);
   }
@@ -130,7 +135,7 @@ async function workOnData(_data) {
       .fadeIn(1000)
       .end()
       .appendTo('#slideshow');
-  },  10000);
+  },  5000);
   
   //animateButtons(true);
   // await delay(2000);
@@ -147,7 +152,7 @@ function fillStars() {
   for(var i=0; i<3; i++) {
     const starPercentage = (avgRatings[avgKeys[i]] / starTotal) * 100;
     const starPercentageRounded = `${(Math.round(starPercentage / 10) * 10)}%`;
-    var items = document.getElementsByClassName(`${data[avgKeys[i]]["app"]}-star stars-inner`);
+    var items = document.getElementsByClassName(`${data[avgKeys[i]]["app"].replace(/\s+/g, '-')}-star stars-inner`);
     items.item(0).style.width = starPercentageRounded;
   }
   avgKeys.splice(0, 3);
