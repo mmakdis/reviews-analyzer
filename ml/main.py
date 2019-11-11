@@ -42,13 +42,13 @@ def difference_in_months(start: datetime, end: datetime) -> int:
     return months
 
 
-def get_negative(coef: dict) -> list:
+def get_negatives(coef: dict) -> list:
     _ = list(sorted_voc_coef.keys())[:2]
     negatives = [key for key in _ if coef[key] < 0]
     return negatives
 
 
-def get_positive(coef: dict) -> list:
+def get_positives(coef: dict) -> list:
     _ = list(sorted_voc_coef.keys())[-2:]
     positives = [key for key in _ if coef[key] > 0]
     return positives
@@ -89,7 +89,7 @@ with open("output.json", "w") as file:
     file.write(json.dumps(datedata))
 
 vectorizer = CountVectorizer(min_df=0.05)
-app_coef = {}
+_app_coef = {}
 for app in datedata:
     reviews, ratings = [], []
     for date in datedata[app]:
@@ -104,12 +104,17 @@ for app in datedata:
     linear_regression = LinearRegression().fit(x_array, ratings)
     voc_coef = dict(zip(vectorizer.vocabulary_, linear_regression.coef_))
     sorted_voc_coef = dict(sorted(voc_coef.items(), key=lambda x: x[1]))
-    print(f"Positives: {get_positive(sorted_voc_coef)}")
-    print(f"Negatives: {get_negative(sorted_voc_coef)}\n")
+    _app_coef[app] = {"positives": get_positives(sorted_voc_coef),
+                    "negatives": get_negatives(sorted_voc_coef)}
     # print(linear_regression.predict(x_array))
 
 
 #cnt_matrix = vectorizer_unstemmed.fit_transform(all_reviews_unstemmed).toarray().transpose()
 #vocab_unstemmed = list(vectorizer_unstemmed.vocabulary_.keys())
 
+print(_app_coef)
+app_coef = {}
+for app in _app_coef:
+    positives = [stemmed_to_unstemmed[positive].most_common(1) for positive in _app_coef[app]["positives"] if positives is not None]
+    negatives = [stemmed_to_unstemmed[negative].most_common(1) for negative in _app_coef[app]["positives"] if negatives is not None]
 print(stemmed_to_unstemmed['inlogg'].most_common(1))
