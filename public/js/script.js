@@ -78,13 +78,36 @@ async function addContainers(contentIndex) {
     element.setAttribute("id", `${dataKeys[i]}`);
     element.setAttribute("class", `container animated zoomIn ${alignHoriz[i]}`);
     var logo = data[dataKeys[i]]["source"] === "Apple Store" ? "iOS" :
-          data[dataKeys[i]]["source"] === "Google Play" ? "Android" : ""; 
+          data[dataKeys[i]]["source"] === "Google Play" ? "Android" : "";
+    
+          var _coef = data[dataKeys[i]]["voc_coef"];
+    var positives = "";
+    var negatives = "";
+    if (typeof _coef === "string"
+        || (_coef["positives"].length == 0
+        || _coef["negatives"].length == 0)) {
+      positives = "![NER]"
+      negatives = "![NER]"
+    }
+    else {
+      for (var positive in _coef["positives"]) {positives += `${_coef["positives"][positive]}, `}
+      for (var negative in _coef["negatives"]) {negatives += `${_coef["negatives"][negative]}, `}
+
+      positives = positives.substring(0, positives.length - 2);
+      negatives = negatives.substring(0, negatives.length - 2);
+    }
+
     element.innerHTML = `
-    <div class="stars-outer">
-      <div class="${data[dataKeys[i]]["app"].replace(/\s+/g, '-')}-${dataKeys[i]} stars-inner"></div>
+    <img class="logo" style="margin: auto;" src="../images/${logo}.svg">
+    <div class="stars-outer" style="margin: auto;">
+      <div class="${data[dataKeys[i]]["app"].replace(/\s+/g, '-')}-${dataKeys[i]} stars-inner" style="margin: auto;"></div>
     </div>
-    <span style="display:inline-block; width: 1.8rem;"></span>
-    <img class="logo" src="../images/${logo}.svg">
+    <div class="nlp">
+      <div class="triangle-top"></div>
+      <div class="info">${positives}</div>
+      <div class="triangle-bottom"></div>
+      <div class="info">${negatives}</div>
+    </div>
     `;
     document.getElementsByClassName('content')[contentIndex].appendChild(element);
     // contentIndex.appendChild(element);

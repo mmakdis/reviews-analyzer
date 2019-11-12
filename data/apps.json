@@ -1,82 +1,174 @@
-[{
-    "_id": {
-        "$oid": "5cdd7c786d149655dc059c41"
+[
+    {
+        "_id": {
+            "$oid": "5cdd7c786d149655dc059c41"
+        },
+        "source": "Apple Store",
+        "app_id": "668022577",
+        "app": "LouLou - Easy date planner",
+        "publisher": "Triple IT",
+        "url": "https://itunes.apple.com/us/app/id668022577",
+        "voc_coef": {
+            "positives": [
+                "naughty",
+                "work"
+            ],
+            "negatives": [
+                "grt",
+                "button"
+            ]
+        }
     },
-    "source": "Apple Store",
-    "app_id": "668022577",
-    "app": "LouLou",
-    "publisher": "Triple IT",
-    "url": "https://itunes.apple.com/us/app/id668022577"
-}, {
-    "_id": {
-        "$oid": "5cdd7de17b67e23f318d3d2a"
+    {
+        "_id": {
+            "$oid": "5cdd7de17b67e23f318d3d2a"
+        },
+        "source": "Apple Store",
+        "app_id": "1436849119",
+        "app": "Futfolio",
+        "publisher": "Triple IT",
+        "url": "https://itunes.apple.com/us/app/id1436849119",
+        "voc_coef": {
+            "positives": [],
+            "negatives": []
+        }
     },
-    "source": "Apple Store",
-    "app_id": "1436849119",
-    "app": "Futfolio",
-    "publisher": "Triple IT",
-    "url": "https://itunes.apple.com/us/app/id1436849119"
-}, {
-    "_id": {
-        "$oid": "5cdd7e93dd7dc71499e25ba8"
+    {
+        "_id": {
+            "$oid": "5cdd7e93dd7dc71499e25ba8"
+        },
+        "source": "Apple Store",
+        "app_id": "498392518",
+        "app": "SpotOn",
+        "publisher": "SpotOn",
+        "url": "https://itunes.apple.com/us/app/id498392518",
+        "voc_coef": {
+            "positives": [
+                "address",
+                "issues"
+            ],
+            "negatives": [
+                "review",
+                "service"
+            ]
+        }
     },
-    "source": "Apple Store",
-    "app_id": "498392518",
-    "app": "SpotOn",
-    "publisher": "SpotOn",
-    "url": "https://itunes.apple.com/us/app/id498392518"
-}, {
-    "_id": {
-        "$oid": "5cdd7f4e069d26a04ac8ef0c"
+    {
+        "_id": {
+            "$oid": "5cdd7f4e069d26a04ac8ef0c"
+        },
+        "source": "Apple Store",
+        "app_id": "985536821",
+        "app": "Spot On",
+        "publisher": "Triple IT",
+        "url": "https://itunes.apple.com/us/app/id985536821",
+        "voc_coef": {
+            "positives": [
+                "![NER]",
+                "![NER]"
+            ],
+            "negatives": [
+                "![NER]",
+                "![NER]"
+            ]
+        }
     },
-    "source": "Apple Store",
-    "app_id": "985536821",
-    "app": "Spot On",
-    "publisher": "Triple IT",
-    "url": "https://itunes.apple.com/us/app/id985536821"
-}, {
-    "_id": {
-        "$oid": "5cdd80b35a47155225e5a995"
+    {
+        "_id": {
+            "$oid": "5cdd80b35a47155225e5a995"
+        },
+        "source": "Apple Store",
+        "app_id": "380464607",
+        "app": "Film1 - Kijk de nieuwste films",
+        "publisher": "Sony Pictures Television",
+        "url": "https://itunes.apple.com/nl/app/id380464607",
+        "voc_coef": {
+            "positives": [
+                "werk",
+                "ipad"
+            ],
+            "negatives": [
+                "dag",
+                "tijd"
+            ]
+        }
     },
-    "source": "Apple Store",
-    "app_id": "380464607",
-    "app": "Film1",
-    "publisher": "Sony Pictures Television",
-    "url": "https://itunes.apple.com/nl/app/id380464607"
-}, {
-    "_id": {
-        "$oid": "5cde848c3680e47449110eb7"
+    {
+        "_id": {
+            "$oid": "5cde848c3680e47449110eb7"
+        },
+        "source": "Apple Store",
+        "app_id": "496189385",
+        "app": "My Vodafone",
+        "publisher": "Vodafone Libertel B.V.",
+        "url": "https://itunes.apple.com/nl/app/id496189385",
+        "voc_coef": {
+            "positives": [
+                "app",
+                "scherm"
+            ],
+            "negatives": [
+                "start",
+                "inloggen"
+            ]
+        }
     },
-    "source": "Apple Store",
-    "app_id": "496189385",
-    "app": "My Vodafone",
-    "publisher": "Vodafone Libertel B.V.",
-    "url": "https://itunes.apple.com/nl/app/id496189385"
-}, {
-    "_id": {
-        "$oid": "5ced4d3f39aa0f6ed81554eb"
+    {
+        "_id": {
+            "$oid": "5ced4d3f39aa0f6ed81554eb"
+        },
+        "source": "Google Play",
+        "app_id": "com.vodafone.android",
+        "app": "My Vodafone",
+        "publisher": "Vodafone Libertel B.V.",
+        "url": "https://play.google.com/store/apps/details?id=com.vodafone.android",
+        "voc_coef": {
+            "positives": [
+                "app"
+            ],
+            "negatives": [
+                "update",
+                "language"
+            ]
+        }
     },
-    "source": "Google Play",
-    "app_id": "com.vodafone.android",
-    "app": "My Vodafone",
-    "publisher": "Vodafone Libertel B.V.",
-    "url": "https://play.google.com/store/apps/details?id=com.vodafone.android"
-}, {
-    "_id": {
-        "$oid": "5cf0de5fbe4bb902a5bd73d5"
+    {
+        "_id": {
+            "$oid": "5cf0de5fbe4bb902a5bd73d5"
+        },
+        "source": "Google Play",
+        "app_id": "nl.nlziet",
+        "app": "NLZIET | Online tv-kijken",
+        "publisher": "NLZIET Cooperatief",
+        "url": "https://play.google.com/store/apps/details?id=nl.nlziet",
+        "voc_coef": {
+            "positives": [
+                "tv",
+                "probleem"
+            ],
+            "negatives": [
+                "full",
+                "beeld"
+            ]
+        }
     },
-    "source": "Google Play",
-    "app_id": "nl.nlziet",
-    "app": "NLZIET",
-    "publisher": "NLZIET Cooperatief",
-    "url": "https://play.google.com/store/apps/details?id=nl.nlziet"
-}, {
-    "_id": {
-        "$oid": "5cf12952406efa2998375151"
-    },
-    "source": "Google Play",
-    "app_id": "com.supportware.Buienradar",
-    "app": "Buienradar",
-    "publisher": "Buienradar\u00ae B.V.",
-    "url": "https://play.google.com/store/apps/details?id=com.supportware.Buienradar"
-}]
+    {
+        "_id": {
+            "$oid": "5cf12952406efa2998375151"
+        },
+        "source": "Google Play",
+        "app_id": "com.supportware.Buienradar",
+        "app": "Buienradar - weer",
+        "publisher": "Buienradar® B.V.",
+        "url": "https://play.google.com/store/apps/details?id=com.supportware.Buienradar",
+        "voc_coef": {
+            "positives": [
+                "app"
+            ],
+            "negatives": [
+                "update",
+                "buienradar"
+            ]
+        }
+    }
+]
