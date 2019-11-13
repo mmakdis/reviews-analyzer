@@ -68,8 +68,8 @@ body, html
 	 /* margin: 0 -1em; */
 	margin: 0 auto;
 	position: absolute;
-  	left: 50%;
-  	top: 50%;
+  left: 50%;
+  top: 50%;
 	-webkit-transform: translate(-50%, -50%);
 	transform: translate(-50%, -50%);
 	background-attachment: fixed;
@@ -79,6 +79,7 @@ body, html
 .container {
 	display: grid;
 	grid-template-columns: repeat(1, 1fr);
+	grid-template-rows: 45% 20% 35%;
 	width: calc(32%);
 	height: 49rem;
 	box-shadow: 0 0 1rem 0 rgba(0, 0, 0, .2);   
@@ -92,7 +93,7 @@ body, html
 }
 
 .container:before {
-	content: "";
+  content: "";
   position: absolute;
   background: inherit;
   z-index: 3;
@@ -120,7 +121,7 @@ body, html
 .nlp {
   display: grid;
   /* grid-template-columns: repeat(2, 1fr); */
-  grid-template-columns: 30% 65%;
+  grid-template-columns: 75%;
   grid-gap: 10px;
   justify-items: center;
   align-items: center;

@@ -5,6 +5,7 @@ from sklearn.linear_model import LinearRegression
 from pprint import pprint
 import spacy
 from nltk.stem.snowball import SnowballStemmer
+from nltk.corpus import stopwords
 from spacy.lookups import Lookups
 from spacy_langdetect import LanguageDetector
 from datetime import datetime
@@ -70,7 +71,19 @@ class NLP(object):
         Example: only get the nouns and the verbs. It uses POS_TO_USE-
         Which is a global variable that depends on the argument --pos-to-use.
         returns: str
+
+        Parameters
+        ----------
+        sentence : str
+            The sentence to use.
+
+        lang     : str
+            The language to use. If the language is not "en", then it's assumed
+            that the lanuage is Dutch. Nothing else.
         """
+        # Remove stop words.    
+        sentence = " ".join([word for word in sentence.split() if word not in
+                            stopwords.words("english" if lang == "en" else "dutch")])
         doc = nlp_en(sentence) if lang == "en" else nlp_nl(sentence)
         nouns = [token.pos_ for token in doc]
         indices = [str(doc[i]) for i, x in enumerate(nouns) if x in POS_TO_USE]
@@ -86,6 +99,14 @@ class NLP(object):
         Gets the difference between two datetimes, if in months, then return
         the difference in months.
         returns: int
+
+        Parameters
+        ----------
+        start : datetime
+            The start datetime.
+
+        end   : datetime
+            The end datetime.
         """
         if start.year == end.year:
             months = end.month - start.month
@@ -100,6 +121,11 @@ class NLP(object):
         Well, technically they're at the beginning, hence the [:2].
         Only if they're < 0.
         returns: list
+
+        Parameters
+        ----------
+        coef : dict
+            The dict to use to get the negatives from.
         """
         _ = list(coef.keys())[:2]
         negatives = [key for key in _ if coef[key] < 0]
@@ -110,6 +136,11 @@ class NLP(object):
         Gets the last two (most) positive words from the provided dictionary.
         Only if they're > 0.
         returns: list
+
+        Parameters
+        ----------
+        coef : dict
+            The dict to use to get the positives from.
         """
         _ = list(coef.keys())[-2:]
         positives = [key for key in _ if coef[key] > 0]
@@ -249,7 +280,7 @@ class NLP(object):
             data = json.load(f)
             for key in data:
                 app_id = key["_id"]["$oid"]
-                key["voc_coef"] = app_coef[app_id]["coef"] if app_id in app_coef else dummy_dict()
+                key["voc_coef"] = app_coef[app_id]["coef"] if app_id in app_coef else self.dummy_dict()
             f.seek(0)
             json.dump(data, f, ensure_ascii=False, indent=4)
             f.truncate()

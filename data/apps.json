@@ -10,12 +10,12 @@
         "url": "https://itunes.apple.com/us/app/id668022577",
         "voc_coef": {
             "positives": [
-                "naughty",
+                "see",
                 "work"
             ],
             "negatives": [
-                "grt",
-                "button"
+                "vote",
+                "app"
             ]
         }
     },
@@ -44,12 +44,12 @@
         "url": "https://itunes.apple.com/us/app/id498392518",
         "voc_coef": {
             "positives": [
-                "address",
-                "issues"
+                "area",
+                "day"
             ],
             "negatives": [
-                "review",
-                "service"
+                "restaurants",
+                "participating"
             ]
         }
     },
@@ -84,12 +84,12 @@
         "url": "https://itunes.apple.com/nl/app/id380464607",
         "voc_coef": {
             "positives": [
-                "werk",
-                "ipad"
+                "iphone",
+                "verwijderen"
             ],
             "negatives": [
-                "dag",
-                "tijd"
+                "maanden",
+                "staan"
             ]
         }
     },
@@ -108,8 +108,8 @@
                 "scherm"
             ],
             "negatives": [
-                "start",
-                "inloggen"
+                "loopt",
+                "start"
             ]
         }
     },
@@ -124,7 +124,8 @@
         "url": "https://play.google.com/store/apps/details?id=com.vodafone.android",
         "voc_coef": {
             "positives": [
-                "app"
+                "use",
+                "werkt"
             ],
             "negatives": [
                 "update",
@@ -147,8 +148,8 @@
                 "probleem"
             ],
             "negatives": [
-                "full",
-                "beeld"
+                "komt",
+                "full"
             ]
         }
     },
@@ -166,7 +167,7 @@
                 "app"
             ],
             "negatives": [
-                "update",
+                "werkt",
                 "buienradar"
             ]
         }

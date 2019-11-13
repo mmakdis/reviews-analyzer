@@ -79,23 +79,6 @@ async function addContainers(contentIndex) {
     element.setAttribute("class", `container animated zoomIn ${alignHoriz[i]}`);
     var logo = data[dataKeys[i]]["source"] === "Apple Store" ? "iOS" :
           data[dataKeys[i]]["source"] === "Google Play" ? "Android" : "";
-    
-          var _coef = data[dataKeys[i]]["voc_coef"];
-    var positives = "";
-    var negatives = "";
-    if (typeof _coef === "string"
-        || (_coef["positives"].length == 0
-        || _coef["negatives"].length == 0)) {
-      positives = "![NER]"
-      negatives = "![NER]"
-    }
-    else {
-      for (var positive in _coef["positives"]) {positives += `${_coef["positives"][positive]}, `}
-      for (var negative in _coef["negatives"]) {negatives += `${_coef["negatives"][negative]}, `}
-
-      positives = positives.substring(0, positives.length - 2);
-      negatives = negatives.substring(0, negatives.length - 2);
-    }
 
     element.innerHTML = `
     <img class="logo" style="margin: auto;" src="../images/${logo}.svg">
@@ -103,16 +86,42 @@ async function addContainers(contentIndex) {
       <div class="${data[dataKeys[i]]["app"].replace(/\s+/g, '-')}-${dataKeys[i]} stars-inner" style="margin: auto;"></div>
     </div>
     <div class="nlp">
-      <div class="triangle-top"></div>
-      <div class="info">${positives}</div>
-      <div class="triangle-bottom"></div>
-      <div class="info">${negatives}</div>
     </div>
     `;
+    // <marquee behavior="scroll" direction="left">${sentence}</marquee>
+
     document.getElementsByClassName('content')[contentIndex].appendChild(element);
     // contentIndex.appendChild(element);
   }
+
   fillStars(avgRatings);
+
+  var nlp_info = document.getElementsByClassName("nlp");
+  for (var i = 0; i<nlp_info.length; i++) {
+    console.log(document.parentNode.id);
+    var _coef = data[dataKeys[i]]["voc_coef"];
+    var sentence = ""
+    var positives = "Mensen zijn positief over ";
+    var negatives = "en negatief over ";
+    if (typeof _coef === "string"
+        || (_coef["positives"].length == 0
+        || _coef["negatives"].length == 0)) {
+      sentence = "Niet genoeg reviews."
+    }
+    else {
+      for (var positive in _coef["positives"]) {positives += `"${_coef["positives"][positive]}" en `}
+      for (var negative in _coef["negatives"]) {negatives += `"${_coef["negatives"][negative]}" en`}
+
+      positives = positives.substring(0, positives.length - 4);
+      negatives = negatives.substring(0, negatives.length - 4);
+
+      sentence = `${positives} ${negatives}`;
+    }
+    nlp_info.item(i).innerHTML = `<marquee behavior="scroll" direction="left">${sentence}</marquee>`;
+    await delay(20000);
+
+  }
+
   dataKeys.splice(0, 3);
 }
 
@@ -158,7 +167,7 @@ async function workOnData(_data) {
       .fadeIn(1000)
       .end()
       .appendTo('#slideshow');
-  },  5000);
+  },  500000);
   
   //animateButtons(true);
   // await delay(2000);
