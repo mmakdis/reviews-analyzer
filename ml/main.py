@@ -1,6 +1,6 @@
  # -*- coding: utf-8 -*-
 from collections import defaultdict, Counter
-from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 from sklearn.linear_model import LinearRegression
 from pprint import pprint
 import spacy
@@ -35,126 +35,227 @@ for _, value in parsed._get_kwargs():
         POS_TO_USE.extend(value)
 
 
-def get_nouns(sentence: str, lang: str) -> str:
-    doc = nlp_en(sentence) if lang == "en" else nlp_nl(sentence)
-    nouns = [token.pos_ for token in doc]
-    indices = [str(doc[i]) for i, x in enumerate(nouns) if x in POS_TO_USE]
-    stemmer = SnowballStemmer(language="english" if lang == "en" else "dutch")
-    # Count how many times token maps to stemmed token
-    for token in indices:
-        stemmed_to_unstemmed[stemmer.stem(token).lower()][token.lower()] += 1
+class NLP(object):
+    """
+    The NLP class to handle all NLP-related stuff.
+    """
 
-    return " ".join([stemmer.stem(token) for token in indices])
+    def __init__(self):
+        """
+        Only thing that the constructor does is make 2 objects.
+        `datedata` and `_app_coef`. `datedata` is the sorted (gonna-be) data
+        that will get used by the methods. And `_app_coef` is this type of
+        data:
 
+        ```
+        "voc_coef": {
+                "positives": [
+                    "naughty",
+                    "work"
+                ],
+                "negatives": [
+                    "grt",
+                    "button"
+                ]
+            }
+        ```
+        For every app.
+        """
+        self.datedata = {}
+        self._app_coef = {}
 
-def difference_in_months(start: datetime, end: datetime) -> int:
-    if start.year == end.year:
-        months = end.month - start.month
-    else:
-        months = (12 - start.month) + (end.month)
+    def get_nouns(self, sentence: str, lang: str) -> str:
+        """
+        This method uses spaCy to get specific POS from sentences.
+        Example: only get the nouns and the verbs. It uses POS_TO_USE-
+        Which is a global variable that depends on the argument --pos-to-use.
+        returns: str
+        """
+        doc = nlp_en(sentence) if lang == "en" else nlp_nl(sentence)
+        nouns = [token.pos_ for token in doc]
+        indices = [str(doc[i]) for i, x in enumerate(nouns) if x in POS_TO_USE]
+        stemmer = SnowballStemmer(language="english" if lang == "en" else "dutch")
+        # Count how many times token maps to stemmed token
+        for token in indices:
+            stemmed_to_unstemmed[stemmer.stem(token).lower()][token.lower()] += 1
 
-    return months
+        return " ".join([stemmer.stem(token) for token in indices])
 
-
-def get_negatives(coef: dict) -> list:
-    _ = list(sorted_voc_coef.keys())[:2]
-    negatives = [key for key in _ if coef[key] < 0]
-    return negatives
-
-
-def get_positives(coef: dict) -> list:
-    _ = list(sorted_voc_coef.keys())[-2:]
-    positives = [key for key in _ if coef[key] > 0]
-    return positives
-
-
-# Load the JSON data from the file.
-with open("../data/review.json") as f:
-    data = json.load(f)
-
-orgdata = {}
-datedata = {}
-
-# Fix and organize the data, to ease out work.
-for review in data:
-    app_id = review["app"]["$oid"]
-    orgdata.setdefault(app_id, [])
-    orgdata[app_id].append(review)
-    datedata.setdefault(app_id, {})
-
-for app in orgdata:
-    sorted_app: dict = sorted(orgdata[app], key=lambda k: k['timestamp']['$date'])
-    old_date = None
-    for date in sorted_app:
-        temp_date = datetime.utcfromtimestamp(date["timestamp"]["$date"] / 1000)
-        if old_date is None:
-            old_date = temp_date
-            datedata[app][old_date.strftime("%b-%y")] = [date]
-            continue
-        difference = difference_in_months(old_date, temp_date)
-        if difference < 1:
-            datedata[app][old_date.strftime("%b-%y")].append(date)
+    def difference_in_months(self, start: datetime, end: datetime) -> int:
+        """
+        Gets the difference between two datetimes, if in months, then return
+        the difference in months.
+        returns: int
+        """
+        if start.year == end.year:
+            months = end.month - start.month
         else:
-            old_date = temp_date
-            datedata[app][old_date.strftime("%b-%y")] = [date]
+            months = (12 - start.month) + (end.month)
 
-with open("output.json", "w") as file:
-    pass
-    file.write(json.dumps(datedata))
+        return months
 
-vectorizer = CountVectorizer(min_df=0.05)
-_app_coef = {}
-for app in datedata:
-    reviews, ratings = [], []
-    for date in datedata[app]:
-        for review in datedata[app][date]:
-            doc = nlp_en(review["comment"])
-            lang = doc._.language["language"]
-            nouns_only_stemmed = get_nouns(review["comment"], lang)
-            reviews.append(nouns_only_stemmed)
-            ratings.append(review["rating"])
+    def get_negatives(self, coef: dict) -> list:
+        """
+        Gets the last two (most) negative words from the provided dictionary.
+        Well, technically they're at the beginning, hence the [:2].
+        Only if they're < 0.
+        returns: list
+        """
+        _ = list(coef.keys())[:2]
+        negatives = [key for key in _ if coef[key] < 0]
+        return negatives
 
-    x_array = vectorizer.fit_transform(reviews)
-    linear_regression = LinearRegression().fit(x_array, ratings)
-    voc_coef = dict(zip(vectorizer.get_feature_names(), linear_regression.coef_))
-    sorted_voc_coef = dict(sorted(voc_coef.items(), key=lambda x: x[1]))
-    _app_coef[app] = {"positives": get_positives(sorted_voc_coef),
-                      "negatives": get_negatives(sorted_voc_coef)}
-    # print(linear_regression.predict(x_array))
+    def get_positives(self, coef: dict) -> list:
+        """
+        Gets the last two (most) positive words from the provided dictionary.
+        Only if they're > 0.
+        returns: list
+        """
+        _ = list(coef.keys())[-2:]
+        positives = [key for key in _ if coef[key] > 0]
+        return positives
+
+    def dummy_dict(self) -> dict:
+        """
+        Generates a dictionary that looks like this:
+        ```
+        {
+            "positives": ["![NER]", "![NER]"],
+            "negatives": ["![NER]", "![NER]"]
+        }
+        ```
+        This is useful for less coding on the backend side.
+        """
+        _dict = {"positives": [], "negatives": []}
+        for key, value in _dict.items():
+            value.extend(["![NER]"] * 2)
+        return _dict
+
+    def fix_data(self) -> dict:
+        """
+        The data that we begin with is not very good for this type work.
+        So this method first fixes it.
+        """
+        # Load the JSON data from the file.
+        with open("../data/review.json") as f:
+            data = json.load(f)
+
+        orgdata = {}
+        # Fix and organize the data, to ease out work.
+        for review in data:
+            app_id = review["app"]["$oid"]
+            orgdata.setdefault(app_id, [])
+            orgdata[app_id].append(review)
+            self.datedata.setdefault(app_id, {})
+
+        return orgdata
+
+    def sort_data(self, time=None):
+        """
+        Sort the data, by months. For an example:
+        For every month, add the values that have a timestamp in that month,
+        to its current m-y (ex: Sep 19) key. This method first needs to use
+        fix_data() in order to work.
+        """
+        orgdata = self.fix_data()
+        for app in orgdata:
+            sorted_app: dict = sorted(orgdata[app], key=lambda k: k['timestamp']['$date'])
+            old_date = None
+            for date in sorted_app:
+                temp_date = datetime.utcfromtimestamp(date["timestamp"]["$date"] / 1000)
+                if old_date is None:
+                    old_date = temp_date
+                    self.datedata[app][old_date.strftime("%b-%y")] = [date]
+                    continue
+                difference = self.difference_in_months(old_date, temp_date)
+                if difference < 1:
+                    self.datedata[app][old_date.strftime("%b-%y")].append(date)
+                else:
+                    old_date = temp_date
+                    self.datedata[app][old_date.strftime("%b-%y")] = [date]
+
+    def write_output(self, path="output.json"):
+        """
+        Write the output of the datedata object (the sorted months) into a file
+        named "output.json".
+
+        Parameters
+        ----------
+        path : str
+            Provide a path (default `output.json`).
+        """
+        with open(path, "w", encoding='utf-8') as file:
+            json.dump(self.datedata, file, ensure_ascii=False, indent=4)
+
+    def train(self, min_df=0.05):
+        """
+        Train a simple linear regression algorithm based on the data
+        that was previously sorted.
+
+        Parameters
+        ----------
+        min_df : int
+            CountVectorizer's min_df (default `0.05`).
+        """
+        vectorizer = CountVectorizer(min_df=min_df)
+        self._app_coef = {}
+        for app in self.datedata:
+            reviews, ratings = [], []
+            for date in self.datedata[app]:
+                for review in self.datedata[app][date]:
+                    doc = nlp_en(review["comment"])
+                    lang = doc._.language["language"]
+                    nouns_only_stemmed = self.get_nouns(review["comment"], lang)
+                    reviews.append(nouns_only_stemmed)
+                    ratings.append(review["rating"])
+
+            x_array = vectorizer.fit_transform(reviews)
+            linear_regression = LinearRegression().fit(x_array, ratings)
+            voc_coef = dict(zip(vectorizer.get_feature_names(), linear_regression.coef_))
+            sorted_voc_coef = dict(sorted(voc_coef.items(), key=lambda x: x[1]))
+            self._app_coef[app] = {"positives": self.get_positives(sorted_voc_coef),
+                                   "negatives": self.get_negatives(sorted_voc_coef)}
+            # print(linear_regression.predict(x_array))
+
+    def write_to_apps(self):
+        """
+        Writes the data needed for the website to `apps.json`, e.g.
+
+        ```
+        "voc_coef": {
+                "positives": [
+                    "naughty",
+                    "work"
+                ],
+                "negatives": [
+                    "grt",
+                    "button"
+                ]
+            }
+        ```
+
+        Gets added to the app with that data.
+        """
+        app_coef = {}
+        for app in self._app_coef:
+            positives = [stemmed_to_unstemmed[positive].most_common(1)[0][0] for
+                         positive in self._app_coef[app]["positives"] if positive is not None]
+            negatives = [stemmed_to_unstemmed[negative].most_common(1)[0][0] for
+                         negative in self._app_coef[app]["negatives"] if negative is not None]
+
+            app_coef[app] = {"coef": {"positives": positives, "negatives": negatives}}
+
+        with open('../data/apps.json', 'r+', encoding='utf-8') as f:
+            data = json.load(f)
+            for key in data:
+                app_id = key["_id"]["$oid"]
+                key["voc_coef"] = app_coef[app_id]["coef"] if app_id in app_coef else dummy_dict()
+            f.seek(0)
+            json.dump(data, f, ensure_ascii=False, indent=4)
+            f.truncate()
 
 
-#cnt_matrix = vectorizer_unstemmed.fit_transform(all_reviews_unstemmed).toarray().transpose()
-#vocab_unstemmed = list(vectorizer_unstemmed.vocabulary_.keys())
-
-app_coef = {}
-for app in _app_coef:
-    positives = [stemmed_to_unstemmed[positive].most_common(1)[0][0] for
-                 positive in _app_coef[app]["positives"] if positive is not None]
-    negatives = [stemmed_to_unstemmed[negative].most_common(1)[0][0] for
-                 negative in _app_coef[app]["negatives"] if negative is not None]
-
-    app_coef[app] = {"coef": {"positives": positives, "negatives": negatives}}
-
-
-# Yes.
-def dummy_dict() -> dict:
-    _dict = {"positives": [], "negatives": []}
-    for key, value in _dict.items():
-        value.extend(["![NER]"] * 2)
-    return _dict
-
-
-def is_ok(coef: dict) -> bool:
-    for key, value in coef.items():
-        if not value:
-            return False
-    return True
-
-with open('../data/apps.json', 'r+', encoding='utf-8') as f:
-    data = json.load(f)
-    for key in data:
-        app_id = key["_id"]["$oid"]
-        key["voc_coef"] = app_coef[app_id]["coef"] if app_id in app_coef else dummy_dict()
-    f.seek(0)
-    json.dump(data, f, ensure_ascii=False, indent=4)
-    f.truncate()
+nlp = NLP()
+nlp.sort_data()
+nlp.train()
+nlp.write_to_apps()
