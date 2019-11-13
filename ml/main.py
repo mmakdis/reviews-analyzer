@@ -1,10 +1,14 @@
- # -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
+
 from collections import defaultdict, Counter
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 from sklearn.linear_model import LinearRegression
 from pprint import pprint
 import spacy
+from math import sqrt
 from nltk.stem.snowball import SnowballStemmer
+import matplotlib.pyplot as plt
+import numpy as np
 from nltk.corpus import stopwords
 from spacy.lookups import Lookups
 from spacy_langdetect import LanguageDetector
@@ -13,12 +17,16 @@ import json
 from tqdm import tqdm
 import argparse
 
-
 parser = argparse.ArgumentParser(description="This script handles the NLP over the user reviews.")
 
 # Optional argument
 parser.add_argument('-p', '--pos-to-use', nargs='+',
-                help='The types of POS to use. Usage: -p VERB NUM ADP')
+                    help='The types of POS to use. Usage: -p VERB NUM ADP')
+parser.add_argument('-s', '--filter-stopwords', choices=('yes', 'no'),
+                    default='yes',
+                    help='Filter stopwords from the sentences or not? Usage: -s yes')
+parser.add_argument('-g', '--generate-plots', action="store_true",
+                    help='Use this to generate plots.')
 
 parsed = parser.parse_args()
 
@@ -28,12 +36,40 @@ nlp_en = spacy.load("en_core_web_sm")
 nlp_en.add_pipe(LanguageDetector(), name='language_detector', last=True)
 stemmed_to_unstemmed = defaultdict(Counter)
 
+POS_TO_USE = ["NOUN"].extend(parsed.pos_to_use) if \
+    parsed.pos_to_use is not None else ["NOUN"]
+FILTER_STOPWORDS = False if parsed.filter_stopwords == "no" else True
+GENERATE_PLOTS = parsed.generate_plots
 
-POS_TO_USE = ["NOUN"]
 
-for _, value in parsed._get_kwargs():
-    if _ == "pos_to_use" and value is not None:
-        POS_TO_USE.extend(value)
+class Plotting(object):
+    """
+    A class for handling the plots.
+    Will be put in a different script.
+    """
+
+    def __init__(self, path: str = "output.json"):
+        """
+        Read the output.json file.
+        :param path:
+        """
+        with open(path, encoding="utf-8") as f:
+            self.data = json.load(f)
+
+    def plot(self):
+        for app, date in self.data.items():
+            ratings = []
+            months = []
+            for month in date:
+                ratings.append(sum([review["rating"] for review in date[month]]) / len(date[month]))
+                months.append(month)
+
+            x = np.array([n for n in range(len(months))])
+            y = np.array(ratings)
+            plt.xticks(x, months)
+            plt.plot(x, y)
+            plt.show()
+
 
 
 class NLP(object):
@@ -81,9 +117,10 @@ class NLP(object):
             The language to use. If the language is not "en", then it's assumed
             that the lanuage is Dutch. Nothing else.
         """
-        # Remove stop words.    
+        # Remove stop words. Yes.
         sentence = " ".join([word for word in sentence.split() if word not in
-                            stopwords.words("english" if lang == "en" else "dutch")])
+                             stopwords.words("english" if lang == "en" else "dutch")
+                             ]) if FILTER_STOPWORDS else sentence
         doc = nlp_en(sentence) if lang == "en" else nlp_nl(sentence)
         nouns = [token.pos_ for token in doc]
         indices = [str(doc[i]) for i, x in enumerate(nouns) if x in POS_TO_USE]
@@ -285,8 +322,11 @@ class NLP(object):
             json.dump(data, f, ensure_ascii=False, indent=4)
             f.truncate()
 
+# nlp = NLP()
+# nlp.sort_data()
+# nlp.train()
+# nlp.write_to_apps()
 
-nlp = NLP()
-nlp.sort_data()
-nlp.train()
-nlp.write_to_apps()
+
+plot = Plotting()
+plot.plot()

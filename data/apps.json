@@ -10,12 +10,12 @@
         "url": "https://itunes.apple.com/us/app/id668022577",
         "voc_coef": {
             "positives": [
-                "see",
+                "naughty",
                 "work"
             ],
             "negatives": [
-                "vote",
-                "app"
+                "grt",
+                "vote"
             ]
         }
     },
@@ -44,12 +44,12 @@
         "url": "https://itunes.apple.com/us/app/id498392518",
         "voc_coef": {
             "positives": [
-                "area",
-                "day"
+                "month",
+                "check"
             ],
             "negatives": [
-                "restaurants",
-                "participating"
+                "point",
+                "account"
             ]
         }
     },
@@ -84,12 +84,12 @@
         "url": "https://itunes.apple.com/nl/app/id380464607",
         "voc_coef": {
             "positives": [
-                "iphone",
-                "verwijderen"
+                "netflix",
+                "ipad"
             ],
             "negatives": [
-                "maanden",
-                "staan"
+                "dag",
+                "verbinding"
             ]
         }
     },
@@ -108,8 +108,8 @@
                 "scherm"
             ],
             "negatives": [
-                "loopt",
-                "start"
+                "start",
+                "vodafone"
             ]
         }
     },
@@ -124,8 +124,7 @@
         "url": "https://play.google.com/store/apps/details?id=com.vodafone.android",
         "voc_coef": {
             "positives": [
-                "use",
-                "werkt"
+                "app"
             ],
             "negatives": [
                 "update",
@@ -144,12 +143,12 @@
         "url": "https://play.google.com/store/apps/details?id=nl.nlziet",
         "voc_coef": {
             "positives": [
-                "tv",
+                "chromecast",
                 "probleem"
             ],
             "negatives": [
-                "komt",
-                "full"
+                "full",
+                "android"
             ]
         }
     },
@@ -167,8 +166,7 @@
                 "app"
             ],
             "negatives": [
-                "werkt",
-                "buienradar"
+                "update"
             ]
         }
     }
