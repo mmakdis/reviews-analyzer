@@ -79,7 +79,9 @@ body, html
 .container {
 	display: grid;
 	grid-template-columns: repeat(1, 1fr);
-	grid-template-rows: 45% 20% 35%;
+  grid-template-rows: 45% 20% 35%;
+  align-items: center;
+  justify-items: center; 
 	width: calc(32%);
 	height: 49rem;
 	box-shadow: 0 0 1rem 0 rgba(0, 0, 0, .2);   
@@ -111,20 +113,13 @@ body, html
 	margin-left: 20px;
 }
 
-.info {
-  display: grid;
-  justify-items: left;
-  align-items: left;
-  font-size: smaller;
-}
-
 .nlp {
-  display: grid;
-  /* grid-template-columns: repeat(2, 1fr); */
-  grid-template-columns: 75%;
-  grid-gap: 10px;
-  justify-items: center;
+  /* display: grid;
   align-items: center;
+  justify-items: center; 
+  /* grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: 75%;
+  grid-gap: 10px; */
 }
 
 .triangle-top {

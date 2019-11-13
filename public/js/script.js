@@ -97,9 +97,8 @@ async function addContainers(contentIndex) {
   fillStars(avgRatings);
 
   var nlp_info = document.getElementsByClassName("nlp");
-  for (var i = 0; i<nlp_info.length; i++) {
-    console.log(document.parentNode.id);
-    var _coef = data[dataKeys[i]]["voc_coef"];
+  for (var i = 0; i < nlp_info.length; i++) {
+    var _coef = data[nlp_info[i].parentNode.id]["voc_coef"];
     var sentence = ""
     var positives = "Mensen zijn positief over ";
     var negatives = "en negatief over ";
@@ -110,7 +109,7 @@ async function addContainers(contentIndex) {
     }
     else {
       for (var positive in _coef["positives"]) {positives += `"${_coef["positives"][positive]}" en `}
-      for (var negative in _coef["negatives"]) {negatives += `"${_coef["negatives"][negative]}" en`}
+      for (var negative in _coef["negatives"]) {negatives += `"${_coef["negatives"][negative]}" en `}
 
       positives = positives.substring(0, positives.length - 4);
       negatives = negatives.substring(0, negatives.length - 4);
@@ -118,7 +117,7 @@ async function addContainers(contentIndex) {
       sentence = `${positives} ${negatives}`;
     }
     nlp_info.item(i).innerHTML = `<marquee behavior="scroll" direction="left">${sentence}</marquee>`;
-    await delay(20000);
+    await delay(30000);
 
   }
 
@@ -150,13 +149,9 @@ async function workOnData(_data) {
   console.log(data);
   console.log(dataKeys);
 
-  // for(var i=0; i<3; i++) {
-  //   makeContent(i, data, dataKeys);
-  // }
-
-  makeContent(0);
-  makeContent(1);
-  makeContent(2);
+  for(var i=0; i<3; i++) {
+    makeContent(i);
+  }
 
   $("#slideshow > div:gt(0)").hide();
 
