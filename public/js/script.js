@@ -1,5 +1,7 @@
-var avgRatings = {}
-var avgKeys = []
+/*jshint esversion: 8 */
+
+var avgRatings = {};
+var avgKeys = [];
 var alignHoriz = {0: "left", 1: "center", 2: "right"};
 var data = {};
 var dataKeys = [];
@@ -12,7 +14,7 @@ function renderItem(){
   fetch("https://source.unsplash.com/1920x1080/?nature,water,space").then((response)=> {   
     var body = document.getElementsByTagName('body')[0];
     body.style.backgroundImage = `url(${response.url})`;
-  }) 
+  });
 }
 
 function animationEnds() {
@@ -22,16 +24,16 @@ const delay = ms => new Promise(res => setTimeout(res, ms));
 
 
 function animateCSS(element, animationName, callback) {
-  element.classList.add('animated', animationName)
+  element.classList.add('animated', animationName);
 
   function handleAnimationEnd() {
-      element.classList.remove('animated', animationName)
-      element.removeEventListener('animationend', handleAnimationEnd)
+      element.classList.remove('animated', animationName);
+      element.removeEventListener('animationend', handleAnimationEnd);
 
-      if (typeof callback === 'function') callback()
+      if (typeof callback === 'function') callback();
   }
 
-  element.addEventListener('animationend', handleAnimationEnd)
+  element.addEventListener('animationend', handleAnimationEnd);
 }
 
 function animateButtons(move) {
@@ -61,7 +63,7 @@ async function addButtons(contentIndex) {
     element.setAttribute("href", "#");
     element.setAttribute("class", `button ${alignHoriz[i]}`);
     element.setAttribute("name", _dataKeys[i]);
-    element.innerText = data[_dataKeys[i]]["app"];
+    element.innerText = data[_dataKeys[i]].app;
     document.getElementsByClassName("content")[contentIndex].appendChild(element);
     // contentIndex.appendChild(element);
   }
@@ -69,7 +71,7 @@ async function addButtons(contentIndex) {
 
   animateButtons(false);
   await delay(1050);
-  addContainers(contentIndex)
+  addContainers(contentIndex);
 }
 
 async function addContainers(contentIndex) {
@@ -77,13 +79,13 @@ async function addContainers(contentIndex) {
     var element = document.createElement("div");
     element.setAttribute("id", `${dataKeys[i]}`);
     element.setAttribute("class", `container animated zoomIn ${alignHoriz[i]}`);
-    var logo = data[dataKeys[i]]["source"] === "Apple Store" ? "iOS" :
-          data[dataKeys[i]]["source"] === "Google Play" ? "Android" : "";
+    var logo = data[dataKeys[i]].source === "Apple Store" ? "iOS" :
+          data[dataKeys[i]].source === "Google Play" ? "Android" : "";
 
     element.innerHTML = `
     <img class="logo" style="margin: auto;" src="../images/${logo}.svg">
     <div class="stars-outer" style="margin: auto;">
-      <div class="${data[dataKeys[i]]["app"].replace(/\s+/g, '-')}-${dataKeys[i]} stars-inner" style="margin: auto;"></div>
+      <div class="${data[dataKeys[i]].app.replace(/\s+/g, '-')}-${dataKeys[i]} stars-inner" style="margin: auto;"></div>
     </div>
     <div class="nlp">
     </div>
@@ -96,29 +98,41 @@ async function addContainers(contentIndex) {
 
   fillStars(avgRatings);
 
+  await delay(100);
+
   var nlp_info = document.getElementsByClassName("nlp");
   for (var i = 0; i < nlp_info.length; i++) {
-    var _coef = data[nlp_info[i].parentNode.id]["voc_coef"];
-    var sentence = ""
-    var positives = "Mensen zijn positief over ";
-    var negatives = "en negatief over ";
+    var _coef = data[nlp_info[i].parentNode.id].voc_coef;
+    var sentence = "";
+    var positives = "";
+    var negatives = "";
     if (typeof _coef === "string"
-        || (_coef["positives"].length == 0
-        || _coef["negatives"].length == 0)) {
-      sentence = "Niet genoeg reviews."
+        || (_coef.positives.length == 0
+        || _coef.negatives.length == 0)) {
+      sentence = "Niet genoeg reviews.";
     }
     else {
-      for (var positive in _coef["positives"]) {positives += `"${_coef["positives"][positive]}" en `}
-      for (var negative in _coef["negatives"]) {negatives += `"${_coef["negatives"][negative]}" en `}
+      for (var positive in _coef.positives) {positives += `${_coef.positives[positive]}, `;}
+      for (var negative in _coef.negatives) {negatives += `${_coef.negatives[negative]}, `;}
 
-      positives = positives.substring(0, positives.length - 4);
-      negatives = negatives.substring(0, negatives.length - 4);
-
-      sentence = `${positives} ${negatives}`;
+      positives = positives.substring(0, positives.length - 2);
+      negatives = negatives.substring(0, negatives.length - 2);
     }
-    nlp_info.item(i).innerHTML = `<marquee behavior="scroll" direction="left">${sentence}</marquee>`;
-    await delay(30000);
-
+    
+    if (sentence !== "") {
+      nlp_info.item(i).innerHTML = `
+      <i class="fa fa-question-circle qm" aria-hidden="true" style="margin: auto;"></i>
+      <div class="ner animated flash slower delay-5s" style="margin: auto;">${sentence}</div>`;
+    }
+    else {
+      nlp_info.item(i).innerHTML = 
+      `
+      <div class="triangle-top" style="margin: auto;"></div>
+      <div class="info animated flash slower delay-5s" style="margin: auto;">${positives}</div>
+      <div class="triangle-bottom" style="margin: auto;"></div>
+      <div class="info animated flash slower delay-5s" style="margin: auto;">${negatives}</div>
+      `;
+    }
   }
 
   dataKeys.splice(0, 3);
@@ -133,8 +147,8 @@ async function workOnData(_data) {
   for(var stuff in data) {
     sum = 0;
     count = 0;
-    for(var comments in data[stuff]["comments"]) {
-      sum += data[stuff]["comments"][count]["rating"];
+    for(var comments in data[stuff].comments) {
+      sum += data[stuff].comments[count].rating;
       count += 1;
     }
 
@@ -180,7 +194,7 @@ function fillStars() {
     const starPercentage = (avgRatings[avgKeys[i]] / starTotal) * 100;
     const starPercentageRounded = `${(Math.round(starPercentage / 10) * 10)}%`;
     var items = document.getElementsByClassName(`${data[avgKeys[i]]["app"].replace(/\s+/g, '-')}-${dataKeys[i]} stars-inner`);
-    items.item(0).style.width = starPercentageRounded;
+    if (items.length > 0) {items.item(0).style.width = starPercentageRounded;}
   }
   avgKeys.splice(0, 3);
   // for(var rating in ratings) {

@@ -77,11 +77,12 @@ body, html
 
 
 .container {
+  font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
 	display: grid;
 	grid-template-columns: repeat(1, 1fr);
-  grid-template-rows: 45% 20% 35%;
-  align-items: center;
-  justify-items: center; 
+	grid-template-rows: 45% 20% 35%;
+	align-items: center;
+	justify-items: center; 
 	width: calc(32%);
 	height: 49rem;
 	box-shadow: 0 0 1rem 0 rgba(0, 0, 0, .2);   
@@ -113,13 +114,29 @@ body, html
 	margin-left: 20px;
 }
 
+.info {
+  font-size: 50px;
+  margin: auto;
+}
+
+.ner {
+  font-size: 60px;
+}
+
+.qm {
+  font-size: 70px;
+}
+
 .nlp {
-  /* display: grid;
+  width: calc(100%);
+  height: auto;
+  display: grid;
   align-items: center;
   justify-items: center; 
-  /* grid-template-columns: repeat(2, 1fr);
-  grid-template-columns: 75%;
-  grid-gap: 10px; */
+  text-align: center;
+  grid-template-columns: 25% 75%;
+  row-gap: 40px;
+  position: relative;
 }
 
 .triangle-top {
@@ -127,7 +144,7 @@ body, html
   width: 0;
   height: 0;
   border-style: solid;
-  border-width: 0 32px 32px 32px;
+  border-width: 0 40px 40px 40px;
   border-color: transparent transparent #00e676 transparent;
 }
 
@@ -136,7 +153,7 @@ body, html
   width: 0;
   height: 0;
   border-style: solid;
-  border-width: 32px 32px 0 32px;
+  border-width: 40px 40px 0 40px;
   border-color: #c62828 transparent transparent transparent;
 }
 

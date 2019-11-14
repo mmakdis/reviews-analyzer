@@ -3,12 +3,20 @@
 from collections import defaultdict, Counter
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 from sklearn.linear_model import LinearRegression
+from sklearn.metrics import accuracy_score
+from sklearn.model_selection import train_test_split
 from pprint import pprint
 import spacy
 from math import sqrt
 from nltk.stem.snowball import SnowballStemmer
 import matplotlib.pyplot as plt
+from matplotlib import gridspec
 import numpy as np
+import re
+from wordcloud import WordCloud
+from PIL import Image
+import random
+from palettable.colorbrewer.qualitative import Dark2_8
 from nltk.corpus import stopwords
 from spacy.lookups import Lookups
 from spacy_langdetect import LanguageDetector
@@ -40,6 +48,9 @@ POS_TO_USE = ["NOUN"].extend(parsed.pos_to_use) if \
     parsed.pos_to_use is not None else ["NOUN"]
 FILTER_STOPWORDS = False if parsed.filter_stopwords == "no" else True
 GENERATE_PLOTS = parsed.generate_plots
+SIZE = (12, 8)
+REPLACE_NO_SPACE = re.compile("[.;:!\'?,\"()\[\]]")
+REPLACE_WITH_SPACE = re.compile("(<br\s*/><br\s*/>)|(\-)|(\/)")
 
 
 class Plotting(object):
@@ -66,10 +77,39 @@ class Plotting(object):
 
             x = np.array([n for n in range(len(months))])
             y = np.array(ratings)
+            plt.autoscale(enable=True, axis="x", tight=False)
             plt.xticks(x, months)
-            plt.plot(x, y)
+            plt.title(app, fontsize=22)
+            plt.autoscale(enable=True, axis="both", tight=False)
+            plt.plot(x, y, "ro")
             plt.show()
+            #plt.savefig(f"plots/{app}.png")
 
+    def color_func(self, word, font_size, position, orientation, random_state=None, **kwargs):
+        return tuple(Dark2_8.colors[random.randint(0, 7)])
+
+    def show_wordcloud(self, data="Test", title=None, font_path="./Fonts/AmaticSC-Bold.ttf", icon="flag.png"):
+        icon_path = "./icons/" + icon
+        icon = Image.open(icon_path)
+        mask = Image.new("RGB", icon.size, (255, 255, 255))
+        mask.paste(icon, icon)
+        mask = np.array(mask)
+        for app, date in self.data.items():
+            reviews = []
+            for month in date:
+                reviews = [review["comment"] for review in date[month]]
+            wordcloud = WordCloud(
+                font_path=font_path,
+                background_color='white',
+                mask=mask,
+                max_words=2000,
+                max_font_size=40,
+                scale=3,
+                random_state=42)
+
+            wordcloud.generate_from_text((" ").join(reviews))
+            wordcloud.recolor(color_func=self.color_func, random_state=3)
+            wordcloud.to_file(f"wordclouds/{app}.png")
 
 
 class NLP(object):
@@ -218,7 +258,7 @@ class NLP(object):
 
         return orgdata
 
-    def sort_data(self, time=None):
+    def preprocess_data(self, time=None):
         """
         Sort the data, by months. For an example:
         For every month, add the values that have a timestamp in that month,
@@ -230,6 +270,10 @@ class NLP(object):
             sorted_app: dict = sorted(orgdata[app], key=lambda k: k['timestamp']['$date'])
             old_date = None
             for date in sorted_app:
+                del date["app"]
+                date["comment"] = REPLACE_NO_SPACE.sub("",
+                                                       date["comment"].lower())
+                date["comment"] = REPLACE_WITH_SPACE.sub(" ", date["comment"])
                 temp_date = datetime.utcfromtimestamp(date["timestamp"]["$date"] / 1000)
                 if old_date is None:
                     old_date = temp_date
@@ -265,7 +309,8 @@ class NLP(object):
         min_df : int
             CountVectorizer's min_df (default `0.05`).
         """
-        vectorizer = CountVectorizer(min_df=min_df)
+        vectorizer = CountVectorizer(ngram_range=(1, 1), min_df=min_df, binary=True)
+        tfidf_vectorizer = TfidfVectorizer()
         self._app_coef = {}
         for app in self.datedata:
             reviews, ratings = [], []
@@ -278,11 +323,15 @@ class NLP(object):
                     ratings.append(review["rating"])
 
             x_array = vectorizer.fit_transform(reviews)
-            linear_regression = LinearRegression().fit(x_array, ratings)
-            voc_coef = dict(zip(vectorizer.get_feature_names(), linear_regression.coef_))
+
+            lr = LinearRegression()
+            lr.fit(x_array, ratings)
+            voc_coef = dict(zip(vectorizer.get_feature_names(), lr.coef_))
             sorted_voc_coef = dict(sorted(voc_coef.items(), key=lambda x: x[1]))
+            print(sorted_voc_coef)
             self._app_coef[app] = {"positives": self.get_positives(sorted_voc_coef),
                                    "negatives": self.get_negatives(sorted_voc_coef)}
+
             # print(linear_regression.predict(x_array))
 
     def write_to_apps(self):
@@ -322,11 +371,12 @@ class NLP(object):
             json.dump(data, f, ensure_ascii=False, indent=4)
             f.truncate()
 
-# nlp = NLP()
-# nlp.sort_data()
-# nlp.train()
+nlp = NLP()
+nlp.preprocess_data()
+nlp.train()
 # nlp.write_to_apps()
 
 
-plot = Plotting()
-plot.plot()
+#plot = Plotting()
+#plot.show_wordcloud()
+#plot.plot()
