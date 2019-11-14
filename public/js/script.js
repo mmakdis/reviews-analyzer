@@ -74,7 +74,7 @@ async function addButtons(contentIndex) {
   addContainers(contentIndex);
 }
 
-async function addContainers(contentIndex) {
+function addContainers(contentIndex) {
   for(var i=0; i<3; i++) {
     var element = document.createElement("div");
     element.setAttribute("id", `${dataKeys[i]}`);
@@ -82,30 +82,11 @@ async function addContainers(contentIndex) {
     var logo = data[dataKeys[i]].source === "Apple Store" ? "iOS" :
           data[dataKeys[i]].source === "Google Play" ? "Android" : "";
 
-    element.innerHTML = `
-    <img class="logo" style="margin: auto;" src="../images/${logo}.svg">
-    <div class="stars-outer" style="margin: auto;">
-      <div class="${data[dataKeys[i]].app.replace(/\s+/g, '-')}-${dataKeys[i]} stars-inner" style="margin: auto;"></div>
-    </div>
-    <div class="nlp">
-    </div>
-    `;
-    // <marquee behavior="scroll" direction="left">${sentence}</marquee>
-
-    document.getElementsByClassName('content')[contentIndex].appendChild(element);
-    // contentIndex.appendChild(element);
-  }
-
-  fillStars(avgRatings);
-
-  await delay(100);
-
-  var nlp_info = document.getElementsByClassName("nlp");
-  for (var i = 0; i < nlp_info.length; i++) {
-    var _coef = data[nlp_info[i].parentNode.id].voc_coef;
+    var _coef = data[dataKeys[i]].voc_coef;
     var sentence = "";
     var positives = "";
     var negatives = "";
+    var html = "";
     if (typeof _coef === "string"
         || (_coef.positives.length == 0
         || _coef.negatives.length == 0)) {
@@ -120,12 +101,12 @@ async function addContainers(contentIndex) {
     }
     
     if (sentence !== "") {
-      nlp_info.item(i).innerHTML = `
+      html = `
       <i class="fa fa-question-circle qm" aria-hidden="true" style="margin: auto;"></i>
       <div class="ner animated flash slower delay-5s" style="margin: auto;">${sentence}</div>`;
     }
     else {
-      nlp_info.item(i).innerHTML = 
+      html = 
       `
       <div class="triangle-top" style="margin: auto;"></div>
       <div class="info animated flash slower delay-5s" style="margin: auto;">${positives}</div>
@@ -133,9 +114,36 @@ async function addContainers(contentIndex) {
       <div class="info animated flash slower delay-5s" style="margin: auto;">${negatives}</div>
       `;
     }
+
+    element.innerHTML = `
+    <img class="logo" style="margin: auto;" src="../images/${logo}.svg">
+    <div class="stars-outer" style="margin: auto;">
+      <div class="${data[dataKeys[i]].app.replace(/\s+/g, '')}-${dataKeys[i]} stars-inner" style="margin: auto;"></div>
+    </div>
+    <div class="nlp">
+    ${html}
+    </div>
+    `;
+    // <marquee behavior="scroll" direction="left">${sentence}</marquee>
+
+    document.getElementsByClassName('content')[contentIndex].appendChild(element);
+    // contentIndex.appendChild(element);
   }
 
+  delay(100);
+
+  fillStars(avgRatings);
+
   dataKeys.splice(0, 3);
+}
+
+async function changeSlide() {
+  $('#slideshow > div:first')
+      .fadeOut(1000)
+      .next()
+      .fadeIn(1000)
+      .end()
+      .appendTo('#slideshow');
 }
 
 async function workOnData(_data) {
@@ -169,39 +177,22 @@ async function workOnData(_data) {
 
   $("#slideshow > div:gt(0)").hide();
 
-  setInterval(function() { 
-    $('#slideshow > div:first')
-      .fadeOut(1000)
-      .next()
-      .fadeIn(1000)
-      .end()
-      .appendTo('#slideshow');
-  },  500000);
-  
-  //animateButtons(true);
-  // await delay(2000);
+  document.addEventListener('keydown', function(event) {
+    if(event.keyCode == 32) {
+        changeSlide();
+    }
+});
 
-  // console.log(document.getElementsByClassName("content")[0]);
-  // document.getElementsByClassName("content")[0].setAttribute("id", "movetxt");
-  //var element = document.createElement("information");
-  //element.setAttribute("class", "stats");
+  setInterval(changeSlide,  60000);
 }
 
-// TODO: My Vodafone not working because of the space. Simple fix. Tomorrow.
 function fillStars() {
   const starTotal = 5;
   for(var i=0; i<3; i++) {
     const starPercentage = (avgRatings[avgKeys[i]] / starTotal) * 100;
     const starPercentageRounded = `${(Math.round(starPercentage / 10) * 10)}%`;
-    var items = document.getElementsByClassName(`${data[avgKeys[i]]["app"].replace(/\s+/g, '-')}-${dataKeys[i]} stars-inner`);
-    if (items.length > 0) {items.item(0).style.width = starPercentageRounded;}
+    var items = document.getElementsByClassName(`${data[avgKeys[i]].app.replace(/\s+/g, '')}-${dataKeys[i]} stars-inner`);
+    items.item(0).style.width = starPercentageRounded;
   }
   avgKeys.splice(0, 3);
-  // for(var rating in ratings) {
-  //   const starPercentage = (ratings[rating] / starTotal) * 100;
-  //   const starPercentageRounded = `${(Math.round(starPercentage / 10) * 10)}%`;
-  //   console.log(`${data[rating]["app"]}-star`);
-  //   var items = document.getElementsByClassName(`${data[rating]["app"]}-star stars-inner`);
-  //   items.item(0).style.width = starPercentageRounded;
-  // }
 }

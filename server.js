@@ -52,7 +52,6 @@ app.post('/', function(req, res) {
 
 app.get("/parse", function(req, res) {
     res.send("Test");
-    console.log(appsData.length);
 })
 
 app.listen(3000, function () {
