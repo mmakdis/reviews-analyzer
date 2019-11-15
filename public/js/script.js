@@ -74,6 +74,12 @@ async function addButtons(contentIndex) {
   addContainers(contentIndex);
 }
 
+function changeInfo(i) {
+  for (var key of Object.keys(data)) {
+    console.log(key + " : " + data[key]);
+ }
+}
+
 function addContainers(contentIndex) {
   for(var i=0; i<3; i++) {
     var element = document.createElement("div");
@@ -120,7 +126,7 @@ function addContainers(contentIndex) {
     <div class="stars-outer" style="margin: auto;">
       <div class="${data[dataKeys[i]].app.replace(/\s+/g, '')}-${dataKeys[i]} stars-inner" style="margin: auto;"></div>
     </div>
-    <div class="nlp">
+    <div class="nlp" id="nlp-${dataKeys[i]}">
     ${html}
     </div>
     `;
@@ -178,7 +184,7 @@ async function workOnData(_data) {
   $("#slideshow > div:gt(0)").hide();
 
   document.addEventListener('keydown', function(event) {
-    if(event.keyCode == 32) {
+    if([32, 13].includes(event.keyCode)) {
         changeSlide();
     }
 });

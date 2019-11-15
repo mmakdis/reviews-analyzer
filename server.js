@@ -30,7 +30,8 @@ function getJSON(filePath) {
 }
 
 function sortJSON() {
-  var allData = {};
+  var allData = {};  
+  readAppsData();
   appsData.forEach(element => {
     allData[element._id.$oid] = element;
     allData[element._id.$oid].comments = [];
