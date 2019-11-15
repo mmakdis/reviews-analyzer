@@ -1,6 +1,6 @@
 # Reviews visualizer
 
-![Imgur](https://i.imgur.com/OoU7LaB.gif)
+https://i.imgur.com/OoU7LaB.gif (content too large for GitHub, so here's the link)
 
 (the delay between slides was manual [which is either a space or an enter] just for the gif.)
 
