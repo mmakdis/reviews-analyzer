@@ -127,6 +127,13 @@ body, html
   font-size: 70px;
 }
 
+.helpful {
+	font-size: 22px;
+	display: grid;
+	margin-right: 2.5rem;
+	overflow: hidden;
+}
+
 .nlp {
   width: calc(100%);
   height: auto;

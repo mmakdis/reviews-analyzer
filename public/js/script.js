@@ -6,6 +6,8 @@ var alignHoriz = {0: "left", 1: "center", 2: "right"};
 var data = {};
 var dataKeys = [];
 var _dataKeys = [];
+var currentInfo = false;
+var htmlInfo = {};
 
 /**
  * Get a random image from Unsplash and use it as the background.
@@ -74,7 +76,7 @@ async function addButtons(contentIndex) {
   addContainers(contentIndex);
 }
 
-function changeInfo(i) {
+function updateInfo(i) {
   for (var key of Object.keys(data)) {
     console.log(key + " : " + data[key]);
  }
@@ -104,30 +106,40 @@ function addContainers(contentIndex) {
 
       positives = positives.substring(0, positives.length - 2);
       negatives = negatives.substring(0, negatives.length - 2);
+
+      positives = positives.capitalize() + '.';
+      negatives = negatives.capitalize() + '.';
     }
     
     if (sentence !== "") {
       html = `
-      <i class="fa fa-question-circle qm" aria-hidden="true" style="margin: auto;"></i>
-      <div class="ner animated flash slower delay-5s" style="margin: auto;">${sentence}</div>`;
+      <i class="fa fa-question-circle qm animated heartBeat slow" aria-hidden="true" style="margin: auto;"></i>
+      <div class="ner animated heartBeat slow" style="margin: auto;">${sentence}</div>`;
     }
     else {
       html = 
       `
-      <div class="triangle-top" style="margin: auto;"></div>
-      <div class="info animated flash slower delay-5s" style="margin: auto;">${positives}</div>
-      <div class="triangle-bottom" style="margin: auto;"></div>
-      <div class="info animated flash slower delay-5s" style="margin: auto;">${negatives}</div>
+      <div class="triangle-top animated heartBeat slow" style="margin: auto;"></div>
+      <div class="info animated heartBeat slow" style="margin: auto;">${positives}</div>
+      <div class="triangle-bottom animated heartBeat slow" style="margin: auto;"></div>
+      <div class="info animated heartBeat slow" style="margin: auto;">${negatives}</div>
       `;
     }
+
+    var tempHtml = `
+      <i class="fa fas fa-comments animated heartBeat slow" aria-hidden="true" style="margin: auto;"></i>
+      <div class="helpful animated heartBeat slow"><i>"${data[dataKeys[i]].helpful}"</i></div>
+      `;
+    
+    htmlInfo[dataKeys[i]] = {"stars": html, "helpfulInfo": tempHtml};
 
     element.innerHTML = `
     <img class="logo" style="margin: auto;" src="../images/${logo}.svg">
     <div class="stars-outer" style="margin: auto;">
       <div class="${data[dataKeys[i]].app.replace(/\s+/g, '')}-${dataKeys[i]} stars-inner" style="margin: auto;"></div>
     </div>
-    <div class="nlp" id="nlp-${dataKeys[i]}">
-    ${html}
+    <div class="nlp">
+        ${html}
     </div>
     `;
     // <marquee behavior="scroll" direction="left">${sentence}</marquee>
@@ -150,6 +162,24 @@ async function changeSlide() {
       .fadeIn(1000)
       .end()
       .appendTo('#slideshow');
+}
+
+
+function changeInfo() {
+  var all_nlps = document.getElementsByClassName("nlp");
+  for (var i=0; i<all_nlps.length; i++) {
+    var _id = all_nlps.item(i).parentNode.id;
+    var html = "";
+    if (currentInfo) {
+      html = htmlInfo[_id]["stars"];
+    }
+    else {
+      html = htmlInfo[_id]["helpfulInfo"];
+    }
+    all_nlps[i].innerHTML = html;
+  }
+
+  currentInfo = !currentInfo;
 }
 
 async function workOnData(_data) {
@@ -189,7 +219,12 @@ async function workOnData(_data) {
     }
 });
 
-  setInterval(changeSlide,  60000);
+  setInterval(changeSlide,  120000);
+  setInterval(changeInfo,  30000);
+}
+
+String.prototype.capitalize = function() {
+  return this.charAt(0).toUpperCase() + this.slice(1);
 }
 
 function fillStars() {
