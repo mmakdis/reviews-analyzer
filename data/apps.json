@@ -17,7 +17,8 @@
                 "time",
                 "vote"
             ]
-        }
+        },
+        "helpful": "This app needs a way to not let other people write their own answers it would help a lot."
     },
     {
         "_id": {
@@ -31,7 +32,8 @@
         "voc_coef": {
             "positives": [],
             "negatives": []
-        }
+        },
+        "helpful": "I like the idea but the visuals and user friendliness isn’t there."
     },
     {
         "_id": {
@@ -51,7 +53,8 @@
                 "review",
                 "email"
             ]
-        }
+        },
+        "helpful": "I love the discovery tab fun way to find deals around me i hope they add more soon."
     },
     {
         "_id": {
@@ -65,7 +68,8 @@
         "voc_coef": {
             "positives": [],
             "negatives": []
-        }
+        },
+        "helpful": null
     },
     {
         "_id": {
@@ -85,7 +89,8 @@
                 "dag",
                 "tv"
             ]
-        }
+        },
+        "helpful": "Iedere keer in laatste half uur stopt de app hapert of valt t beeld weg ik begrijp niet waarom ze dat niet een keer goed krijgen slechte app niet downloaden maar via internet gaan kijken."
     },
     {
         "_id": {
@@ -105,7 +110,8 @@
                 "start",
                 "update"
             ]
-        }
+        },
+        "helpful": "Prima app maar de getoonde informatie over de resterende minuten etc in je bundel is niet up to date."
     },
     {
         "_id": {
@@ -122,7 +128,8 @@
                 "update",
                 "language"
             ]
-        }
+        },
+        "helpful": "Te ingewikkeld waardeloos overdreven ingewikkelde ui daarnaast kan ik de status van mijn databundel nu niet meer bekijken cirkel blijft leeg het nut van inloggen met meerdere accounts snap ik al helemaal niet maar t voegt wel weer extra handelingen toe."
     },
     {
         "_id": {
@@ -142,7 +149,8 @@
                 "inloggen",
                 "videos"
             ]
-        }
+        },
+        "helpful": "Werkt weer een stuk beter na de laatste update eindelijk een werkende notificatie op android o en casten naar de shield werkt nu ook nu nog de gemankeerde navigatie in de app fixen en dan is het helemaal top ook fijn om te merken dat er toch wel iets met de feedback gedaan wordt."
     },
     {
         "_id": {
@@ -160,6 +168,7 @@
             "negatives": [
                 "update"
             ]
-        }
+        },
+        "helpful": "Was een fijne app maar na de update blijft de app maar zeuren om gps aan te zetten dat wil ik niet ivm stroom besparing maar het is niet mogelijk die waarschuwing uit te zetten na elke actie in de app krijg je de pop up weer haal dat er svp zo snel mogelijk uit."
     }
 ]

@@ -301,7 +301,7 @@ class NLP(object):
     def train(self, min_df=0.05):
         """
         Train a simple linear regression algorithm based on the data
-        that was previously sorted.
+        that was previously sorted. Needs some serious clean up, lol.
 
         Parameters
         ----------
@@ -310,26 +310,56 @@ class NLP(object):
         """
         vectorizer = CountVectorizer(ngram_range=(1, 1), min_df=min_df, binary=True)
         tfidf_vectorizer = TfidfVectorizer()
+        all_reviews = []
         self._app_coef = {}
         for app in self.datedata:
-            reviews, ratings = [], []
+            reviews, ratings, reviews_normal = [], [], []
             for date in self.datedata[app]:
                 for review in self.datedata[app][date]:
                     doc = nlp_en(review["comment"])
                     lang = doc._.language["language"]
                     nouns_only_stemmed = self.get_nouns(review["comment"], lang)
                     reviews.append(nouns_only_stemmed)
+                    reviews_normal.append(review["comment"])
                     ratings.append(review["rating"])
 
-            x_array = vectorizer.fit_transform(reviews)
+            all_reviews.extend(reviews)
 
+            x_array = vectorizer.fit_transform(reviews)
+            x_tfidf = tfidf_vectorizer.fit_transform(reviews)
+            x_tfidf_dict = dict(x_tfidf.todok().items())
+            #counter = {}
+            averages = {}
+            for key, value in x_tfidf_dict.items():
+                #counter.setdefault(key[0], 0)
+                #counter[key[0]] += 1
+                averages.setdefault(key[0], [])
+                averages[key[0]].append(value)
+
+            highest_average = 0
+            highest_sentence = ""
+            #print(averages)
+            for key, value in averages.items():
+                if len(value) < 4:
+                    continue
+                sentence = reviews_normal[key]
+                average = sum(value) / len(value)
+
+                if average > highest_average:
+                    highest_average = average
+                    highest_sentence = sentence
+
+            highest_sentence = '. '.join(map(lambda s: s.strip().capitalize(),
+                                             highest_sentence.split('.')))
+            highest_sentence += '.' if highest_sentence[0] != '.' else ''
+            print(f"Sentence: {highest_sentence}, avg: {highest_average}")
             lr = LinearRegression()
             lr.fit(x_array, ratings)
             voc_coef = dict(zip(vectorizer.get_feature_names(), lr.coef_))
             sorted_voc_coef = dict(sorted(voc_coef.items(), key=lambda x: x[1]))
-            print(sorted_voc_coef)
             self._app_coef[app] = {"positives": self.get_positives(sorted_voc_coef),
-                                   "negatives": self.get_negatives(sorted_voc_coef)}
+                                   "negatives": self.get_negatives(sorted_voc_coef),
+                                   "helpful": highest_sentence}
 
             # print(linear_regression.predict(x_array))
 
@@ -358,17 +388,24 @@ class NLP(object):
                          positive in self._app_coef[app]["positives"] if positive is not None]
             negatives = [stemmed_to_unstemmed[negative].most_common(1)[0][0] for
                          negative in self._app_coef[app]["negatives"] if negative is not None]
+            helpful = self._app_coef[app]["helpful"]
 
-            app_coef[app] = {"coef": {"positives": positives, "negatives": negatives}}
+            app_coef[app] = {"coef": {"positives": positives,
+                                      "negatives": negatives},
+                             "helpful": helpful}
 
         with open('../data/apps.json', 'r+', encoding='utf-8') as f:
             data = json.load(f)
             for key in data:
                 app_id = key["_id"]["$oid"]
-                key["voc_coef"] = app_coef[app_id]["coef"] if app_id in app_coef else self.dummy_dict()
+                key["voc_coef"] = app_coef[app_id]["coef"] if app_id in \
+                    app_coef else self.dummy_dict()
+                key["helpful"] = app_coef[app_id]["helpful"] if app_id in \
+                    app_coef else None
             f.seek(0)
             json.dump(data, f, ensure_ascii=False, indent=4)
             f.truncate()
+
 
 nlp = NLP()
 nlp.preprocess_data()
