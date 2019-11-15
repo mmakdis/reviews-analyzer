@@ -225,18 +225,17 @@ class NLP(object):
 
     def dummy_dict(self) -> dict:
         """
-        Generates a dictionary that looks like this:
+        Returns a dictionary that looks like this:
         ```
         {
-            "positives": ["![NER]", "![NER]"],
-            "negatives": ["![NER]", "![NER]"]
+            "positives": [],
+            "negatives": []
         }
         ```
         This is useful for less coding on the backend side.
+        Cool, I know.
         """
         _dict = {"positives": [], "negatives": []}
-        for key, value in _dict.items():
-            value.extend(["![NER]"] * 2)
         return _dict
 
     def fix_data(self) -> dict:
@@ -374,7 +373,7 @@ class NLP(object):
 nlp = NLP()
 nlp.preprocess_data()
 nlp.train()
-# nlp.write_to_apps()
+nlp.write_to_apps()
 
 
 #plot = Plotting()

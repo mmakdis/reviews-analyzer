@@ -14,7 +14,7 @@
                 "work"
             ],
             "negatives": [
-                "grt",
+                "time",
                 "vote"
             ]
         }
@@ -45,11 +45,11 @@
         "voc_coef": {
             "positives": [
                 "month",
-                "check"
+                "issues"
             ],
             "negatives": [
-                "point",
-                "account"
+                "review",
+                "email"
             ]
         }
     },
@@ -63,14 +63,8 @@
         "publisher": "Triple IT",
         "url": "https://itunes.apple.com/us/app/id985536821",
         "voc_coef": {
-            "positives": [
-                "![NER]",
-                "![NER]"
-            ],
-            "negatives": [
-                "![NER]",
-                "![NER]"
-            ]
+            "positives": [],
+            "negatives": []
         }
     },
     {
@@ -84,12 +78,12 @@
         "url": "https://itunes.apple.com/nl/app/id380464607",
         "voc_coef": {
             "positives": [
-                "netflix",
-                "ipad"
+                "iphone",
+                "streamen"
             ],
             "negatives": [
                 "dag",
-                "verbinding"
+                "tv"
             ]
         }
     },
@@ -104,12 +98,12 @@
         "url": "https://itunes.apple.com/nl/app/id496189385",
         "voc_coef": {
             "positives": [
-                "app",
+                "vodafone",
                 "scherm"
             ],
             "negatives": [
                 "start",
-                "vodafone"
+                "update"
             ]
         }
     },
@@ -123,9 +117,7 @@
         "publisher": "Vodafone Libertel B.V.",
         "url": "https://play.google.com/store/apps/details?id=com.vodafone.android",
         "voc_coef": {
-            "positives": [
-                "app"
-            ],
+            "positives": [],
             "negatives": [
                 "update",
                 "language"
@@ -143,12 +135,12 @@
         "url": "https://play.google.com/store/apps/details?id=nl.nlziet",
         "voc_coef": {
             "positives": [
-                "chromecast",
-                "probleem"
+                "tv",
+                "problemen"
             ],
             "negatives": [
-                "full",
-                "android"
+                "inloggen",
+                "videos"
             ]
         }
     },

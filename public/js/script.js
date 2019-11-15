@@ -196,3 +196,25 @@ function fillStars() {
   }
   avgKeys.splice(0, 3);
 }
+
+
+function reloadData() {
+  $(function(){
+    $.ajax({
+        url: '/reload',
+        data: "work",
+        dataType: 'json',
+        type: 'POST',
+        success: function(items) {
+          var _keys = Object.keys(data);
+          for(var stuff in items.appsData) {
+            data[_keys[stuff]].voc_coef = items.appsData[stuff].voc_coef;
+          }
+        }
+    });
+  });
+}
+
+setInterval(() => {
+  reloadData();
+}, 1000 * 60 * 60); 

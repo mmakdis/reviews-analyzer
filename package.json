@@ -6,6 +6,7 @@
   "dependencies": {
     "animate.css": "^3.7.2",
     "body-parser": "^1.19.0",
+    "cron": "^1.7.2",
     "ejs": "^2.7.1",
     "express": "^4.17.1",
     "jquery": "^3.4.1",
