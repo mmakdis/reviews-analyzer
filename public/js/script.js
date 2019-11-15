@@ -126,9 +126,14 @@ function addContainers(contentIndex) {
       `;
     }
 
+    var helpful = data[dataKeys[i]].helpful;
+    if (helpful === null) {
+      helpful = "-";
+    }
+    
     var tempHtml = `
       <i class="fa fas fa-comments animated heartBeat slow" aria-hidden="true" style="margin: auto;"></i>
-      <div class="helpful animated heartBeat slow"><i>"${data[dataKeys[i]].helpful}"</i></div>
+      <div class="helpful animated heartBeat slow">"${helpful}"</div>
       `;
     
     htmlInfo[dataKeys[i]] = {"stars": html, "helpfulInfo": tempHtml};
